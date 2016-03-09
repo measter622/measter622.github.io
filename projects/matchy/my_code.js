@@ -130,5 +130,5 @@ function remove(animalName) {
 
 function create(object) {
     if (object.name.length && object.species.length && !search(object.name)) animals.push(object);
-
+        
 }
