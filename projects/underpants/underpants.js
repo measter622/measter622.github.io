@@ -28,7 +28,7 @@ window._ = {};
 
 _.identity = function identity(value) {
   return value;  
-};
+}
 
 /** _.typeOf()
 * Arguments:
@@ -68,6 +68,7 @@ _.typeOf = function typeOf(value) {
     
     if (typeof value === 'object') return 'object'; 
 };
+
 /** _.first()
 * Arguments:
 *   1) An array
@@ -121,7 +122,7 @@ _.last = function last(array, number) {
         return array.slice(0, array.length);
     
     return array.slice(array.length - number);
-}    
+};    
 
 /** _.each()
 * Arguments:
@@ -138,10 +139,28 @@ _.last = function last(array, number) {
 *   _.each(["a","b","c"], function(e,i,a){ console.log(e)}); 
 *      -> should log "a" "b" "c" to the console
 */
-_.each = function each(collection, funct) {
+_.each = function each(collection, fn) {
+    
+    if (_.typeOf(collection) === 'array') {
+        for (var i = 0; i < collection.length; i++) {
+            fn(collection[i], i, collection);
+        }
+    }
+    
+    if (_.typeOf(collection) === 'object') {
+        for (var key in collection) {
+            fn(collection[key], key, collection );
+        }
+    }
+}
+
+    
+
+        
+        
     
        
-};
+//});
 
 
 /** _.indexOf()
@@ -160,6 +179,12 @@ _.each = function each(collection, funct) {
 *   _.indexOf(["a","b","c"], "d") -> -1
 */
 _.indexOf = function indexOf(array, val) {
+    for (var i = 0; i < array.length; i++) {
+        if (array[i] === val)  {
+            return i;
+        }
+    }
+    return -1;
     
 };  
 
@@ -178,7 +203,15 @@ _.indexOf = function indexOf(array, val) {
 * Extra Credit:
 *   use _.each in your implementation
 */
-
+_.filter = function filter(array, fn) {
+    var out = [];
+    
+    _.each(array, function(el, i, col) {
+        if (fn(el, i, col)) out.push(el);
+    });
+        return out;
+    
+};
 
 /** _.reject()
 * Arguments:
@@ -193,6 +226,13 @@ _.indexOf = function indexOf(array, val) {
 *   _.reject([1,2,3,4,5], function(e){return e%2 === 0}) -> [1,3,5]
 */
 
+_.reject = function reject(array, fn) {
+    return _.filter(array, function (el, i, col) {
+        return !fn(el, i, col);
+    });
+        
+    
+};
 
 /** _.partition()
 * Arguments:
@@ -213,6 +253,10 @@ _.indexOf = function indexOf(array, val) {
 }
 */
 
+_.partition = function partition(array, fn) {
+    return [ _.filter(array, fn), _.reject(array, fn) ];
+};
+
 
 /** _.unique()
 * Arguments:
@@ -223,6 +267,17 @@ _.indexOf = function indexOf(array, val) {
 * Examples:
 *   _.unique([1,2,2,4,5,6,5,2]) -> [1,2,4,5,6]
 */
+_.unique = function(array) {
+    var myArray = [];
+    for (var i = 0; i < array.length; i++) {
+        if (_.indexOf(myArray, array[i]) >-1) continue;
+        myArray.push(array[i]);
+    }
+    return myArray;
+
+};
+
+
 
 
 /** _.map()
@@ -240,7 +295,21 @@ _.indexOf = function indexOf(array, val) {
 * Examples:
 *   _.map([1,2,3,4], function(e){return e * 2}) -> [2,4,6,8]
 */
-
+_.map = function map(col, fn) {
+    var newArray = [];
+    if (_.typeOf(col) === 'array') {
+        for (var i = 0; i < col.length; i++) {
+            newArray.push(fn(col[i], i, col));
+        }
+    }
+    if (_.typeOf(col) === 'object') {
+        for(var key in col) {
+            newArray.push(fn(col[key] , key, col));
+        }        
+    }
+    
+    return newArray;
+}
 
 /** _.pluck()
 * Arguments:
@@ -252,7 +321,13 @@ _.indexOf = function indexOf(array, val) {
 * Examples:
 *   _.pluck([{a: "one"}, {a: "two"}], "a") -> ["one", "two"]
 */
+//_.pluck = function
 
+_.pluck = function pluck(array, prop) {
+    return _.map(array, function(el, i, col) {
+        return el[prop];
+    });
+};
 
 /** _.contains()
 * Arguments:
@@ -269,6 +344,10 @@ _.indexOf = function indexOf(array, val) {
 *   _.contains([1,"two", 3.14], "two") -> true
 */
 
+_.contains = function contains(arr, val) {
+    return (_.indexOf(arr, val) > -1) ? true : false;
+    
+}
 
 /** _.every()
 * Arguments:
@@ -291,6 +370,36 @@ _.indexOf = function indexOf(array, val) {
 *   _.every([1,2,3], function(e){return e % 2 === 0}) -> false
 */
 
+_.every = function every(col, fn) {
+    var filter;
+    if (_.typeOf(col) === 'array') {
+        if (_.typeOf(fn) === 'function') {
+            filter = _.filter(col, fn);
+            return (filter.length === col.length);
+        }
+        else {
+            filter = _.filter(col, function(el, i, arr) {
+                return el;
+            });
+            return (filter.length === col.length);
+        }
+    }
+    if (_.typeOf(col) === 'object') {
+        var theKeys = Object.keys(col);
+        if (_.typeOf(fn) === 'function') {
+            filter = _.filter(theKeys, function(el, i, arr) {
+                return fn(col[el], el, col);
+            })
+            return (theKeys.length === filter.length);
+        }
+        else {
+            filter = _.filter(theKeys, function(el, i, arr) {
+                return col[el];
+            });
+            return (theKeys.length === filter.length);
+        }
+    }
+};
 
 /** _.some()
 * Arguments:
@@ -313,6 +422,35 @@ _.indexOf = function indexOf(array, val) {
 *   _.some([1,2,3], function(e){return e % 2 === 0}) -> true
 */
 
+_.some = function some(col, fn) {
+    var filter;
+    if (_.typeOf(col) === 'array') {
+        if (_.typeOf(fn) === 'function') {
+            filter = _.filter(col, fn);
+        }
+        else {
+            filter = _.filter(col, function(el, i, arr) {
+                return el;
+            });
+        }
+        return !(filter.length === 0);
+    }
+    if (_.typeOf(col) === 'object') {
+        var theKeys = Object.keys(col);
+        if (_.typeOf(fn) === 'function') {
+            filter = _.filter(theKeys, function(el, i, arr) {
+                return fn(col[el], el, col);
+            })
+        }
+        else {
+            filter = _.filter(theKeys, function(el, i, arr) {
+                return col[el];
+            });
+        }
+        return !(filter.length === 0);
+    }    
+};
+
 
 /** _.reduce()
 * Arguments:
@@ -320,7 +458,7 @@ _.indexOf = function indexOf(array, val) {
 *   2) A function
 *   3) A seed
 * Objectives:
-*   1) Call <function> for every element in <collection> passing the arguments:
+*   1) Call <function> for every element in <array> passing the arguments:
 *         previous result, element, index
 *   2) Use the return value of <function> as the "previous result"
 *      for the next iteration
@@ -333,6 +471,18 @@ _.indexOf = function indexOf(array, val) {
 *   _.reduce([1,2,3], function(prev, curr){ return prev + curr}) -> 6
 */
 
+_.reduce = function reduce(arr, fn, seed) {
+    
+    for (var i = 0; i < arr.length; i++) {
+    if (_.typeOf(seed) === 'undefined') {
+        seed = arr[0];
+        continue;
+    }
+    seed = fn(seed, arr[i], i);
+    }
+    return seed;
+
+};
 
 /** _.extend()
 * Arguments:
@@ -348,7 +498,25 @@ _.indexOf = function indexOf(array, val) {
 *   _.extend(data, {b:"two"}); -> data now equals {a:"one",b:"two"}
 *   _.extend(data, {a:"two"}); -> data now equals {a:"two"}
 */
+_.extend = function (obj1, obj2) {
+    
+    for (var i = 0; arguments.length; i++) {
+        if (i === 0) continue;
+        for ( var key in arguments[i]) {
+            obj1[key] = arguments[i][key];
+        }
+        }
+        return obj1;
+        
+        
+        
+    
+    
+    
 
+  
+    
+};
 
 // This is the proper way to end a javascript library
-}());
+})();
