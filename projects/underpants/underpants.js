@@ -28,7 +28,7 @@ window._ = {};
 
 _.identity = function identity(value) {
   return value;  
-}
+};
 
 /** _.typeOf()
 * Arguments:
@@ -152,7 +152,7 @@ _.each = function each(collection, fn) {
             fn(collection[key], key, collection );
         }
     }
-}
+};
 
     
 
@@ -309,7 +309,7 @@ _.map = function map(col, fn) {
     }
     
     return newArray;
-}
+};
 
 /** _.pluck()
 * Arguments:
@@ -347,9 +347,9 @@ _.pluck = function pluck(array, prop) {
 _.contains = function contains(arr, val) {
     return (_.indexOf(arr, val) > -1) ? true : false;
     
-}
+};;
 
-/** _.every()
+/** _.every();
 * Arguments:
 *   1) A collection
 *   2) A function

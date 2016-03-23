@@ -5,7 +5,7 @@
   <title>jQuery One</title>
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap-theme.min.css">
-  <srript scr>https://code.jquery.com/jquery-2.2.1.min.js</srript>
+  <script src =https://code.jquery.com/jquery-2.2.1.min.js></script>
 </head>
 
 <body>
@@ -42,18 +42,39 @@
     
     <!-- YOUR HTML MARKUP GOES ABOVE THIS COMMENT  -->
   </div>
-  <sript>
+  <script>
     (function () {
-    // Prepend a new <div> with the text "hello" to div.container
     
-    .text('hello');
-    .prependTo('.container');
+ //Prepend a new <div> with the text "hello" to div#container
+   
+      $('<div>')
+        .text('hello')
+        .prependTo('.container');
+ // Append a new <div> with the text "goodbye" to div#container
+  
     
+     $('<div> ')
+      .text('goodbye')
+      .appendTo('.container');
+ // Prepend a new <div> the body, append a new <div> after. How is this different than above?
+ 
     $('<div>')
-    .text ('
-    .
+      .prependTo('body');
+      
+    $('<div>')
+      .appendTo('body');
+    
+  // Place a new div#first before the first div.holder
+ 
+    $('div.holder').first().before('<div id="first"></div>');
+    
+  // Place a new div#last with text after the second div.holder 
+ 
+    $('div.holder').last().insertAfter('<div id="last">This is the last div</div>');
+    
+    
     })();
-  </sript>
+  </script>
 </body>
 
 </html>
